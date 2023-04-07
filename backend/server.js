@@ -7,7 +7,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-
 //connect to DataBase
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -115,6 +114,29 @@ app.delete('/delete',(req,res)=>{
         return res.status(406).send();
     }
 })
+
+app.patch('/update',(req,res)=>{
+    const {message,id} = req.body ;
+
+    try {
+        connection.query(
+            "UPDATE post SET message = ? WHERE id = ?",
+            [message,id],
+            (err,result)=>{
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(200).json({message : "update succesfully"});
+            }
+        )
+    }
+    catch(err) {
+        console.log(err);
+        return res.status(500).send();
+    }
+})
+
 //Start Server
 app.listen(1500,(err)=>{
     if (err)

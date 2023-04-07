@@ -1,39 +1,117 @@
 import { useEffect, useState } from 'react';
+import Axios from 'axios'
 
 import './App.css'
+import axios from 'axios';
 
 function App() {
 
-    // const datas = fetch('http://localhost1500/read').then(res=>res.json())
-    
     const [post,setPost] = useState([]);
 
+    const readAPI = 'http://localhost:1500/read' ;
+    const addAPI = 'http://localhost:1500/insert';
+
     function getData() {
-        fetch('http://localhost:1500/read')
-            .then(res=>res.json())
-            .then(data=>{
-                setPost(data);
-            })
+        try {
+            fetch(readAPI)
+                .then(res=>res.json())
+                .then(data=>{
+                    setPost(data);
+                }).catch(err=>{
+                    console.log(err);
+                })
+        }
+        catch(err) {
+            console.log(err);
+        }
     }
 
     useEffect(getData,[]);
 
-    const datas = post.map((data)=>{
+    //read data
+    const datas = post.map((data,i)=>{
         return (
-            <div className='w-8/12 border border-gray-400 shadow-md rounded-lg flex-col flex p-3'>
-                <h4 className='text-lg'>{data.message}</h4>
-                <h5 className='text-end '>{data.name}</h5>
-            </div>
+            <form className='w-8/12 shadow-md rounded-lg flex-col flex p-3 bg-slate-100' key={i}>
+                <h4 className='text-lg '>{data.message}</h4>
+                <h5 className='text-end font-medium'>{data.name}</h5>
+                <div className="flex gap-2">
+                    <input
+                        type="text" 
+                        className='border border-gray-400 rounded-sm w-full p-1 ' 
+                        placeholder='Enter your message'
+                        onChange={(e)=>{
+                            setText(e.target.value);
+                        }}
+                    />
+                    <button className='bg-yellow-300 px-2 rounded-md'>UPDATE</button>
+                </div>
+            </form>
         )
     })
 
-    return (
-        <div className="App">
-            <nav className=' grid place-items-center p-4'>
-                <h1 className='text-3xl'>Duchshund !</h1>
-            </nav>
+    datas.reverse()
 
-            <div className='flex flex-col justify-center items-center gap-6'>
+    //form 
+    const [text,setText] = useState("");
+    const [name,setName] = useState("");
+
+    function addData(e) {
+        e.preventDefault() ;
+        axios.post(addAPI,{
+            message : text,
+            name : name 
+        })
+        .then(()=>{
+            setPost([...post,{
+                message : text,
+                name : name 
+            }])
+        })
+
+        setText('');
+        setName('');
+    }
+
+    
+    //UPDATE
+    function updateData(id) {
+
+    }
+
+    return (
+        <div className="App bg-white">
+            <nav className=' grid place-items-center p-3 bg-gray-700'>
+                <h1 className='text-2xl text-white tracking-wider'>CRUD SALMON</h1>
+            </nav>
+            <div className='flex flex-col justify-center items-center gap-6 p-6'>
+
+                <form className='w-8/12 border p-3 gap-2 flex flex-col' onSubmit={addData}>
+                    <h2>NEW POST</h2>
+                    <h4>TEXT : </h4>
+                    <input
+                        type="text" 
+                        className='border border-gray-400 rounded-sm w-full p-1 ' 
+                        placeholder='Enter your message'
+                        onChange={(e)=>{
+                            setText(e.target.value);
+                        }}
+                    value={text}
+                    />
+                    <h4>Author Name : </h4>
+
+                    <input 
+                        type="text" 
+                        className='border border-gray-400 rounded-sm w-full p-1' 
+                        placeholder='Enter your name'
+                        onChange={(e)=>{
+                            setName(e.target.value);
+                        }}
+                        value={name}
+                    />
+
+                    <button className='bg-green-400 rounded-lg p-1'>SUBMIT</button>
+                    
+                </form>
                 {datas}
             </div>
         </div>
