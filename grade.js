@@ -25,23 +25,23 @@ let semondSemester = [
         credit: 1
     },
     {
-        subject :'Algo',
-        grade :3.5,
-        credit: 3
-    },
-    {
         subject :'DataBase',
         grade :3.5,
         credit: 3
     },
     {
         subject :'elec',
-        grade :4,
+        grade :3,
+        credit: 3
+    },
+    {
+        subject :'Algo',
+        grade :3.5,
         credit: 3
     },
     {
         subject :'Signal',
-        grade :3.5,
+        grade :4,
         credit: 3
     }
 ]
@@ -58,3 +58,4 @@ semondSemester.forEach((x)=>{
 
 console.log("second GPA: "+ total/credits);
 console.log("all    GPA: "+ (total+2.98*20)/(credits+20));
+// console.log("credits all : ", credits);
