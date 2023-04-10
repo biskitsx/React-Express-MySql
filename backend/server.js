@@ -32,7 +32,7 @@ app.get('/',(req,res)=>{
 app.post('/insert',(req,res)=>{
     const {message,name} = req.body ;
 
-    try {
+    try {22
         connection.query(
             "INSERT INTO post(message,name) VALUES (?,?)",
             [message,name],
@@ -95,25 +95,6 @@ app.get('/read/:id',(req,res)=>{
     }
 })
 
-//DELETE
-app.delete('/delete',(req,res)=>{
-    try {
-        connection.query(
-            "SELECT * FROM post",
-            (err,result)=>{
-                if (err) {
-                    console.log(err);
-                    return res.status(401).send();
-                }
-                return res.status(201).json(result);
-            }
-        )
-    }
-    catch(err) {
-        console.log(err);
-        return res.status(406).send();
-    }
-})
 
 app.patch('/update',(req,res)=>{
     const {message,id} = req.body ;
@@ -136,6 +117,32 @@ app.patch('/update',(req,res)=>{
         return res.status(500).send();
     }
 })
+
+app.delete('/delete/:id',(req,res)=>{
+    try {
+        const id = req.params.id ;
+        connection.query(
+            "DELETE FROM post WHERE id = ?",
+            [id],
+            (err,result,fields)=>{
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                if (result.affectedRows === 0) {
+                    res.status(400).json({message: "No user with that ID"});
+                }
+                return res.status(200).json({message : "User deleted successfully"});
+            }
+        )
+    }
+    catch(err) {
+        console.log(err);
+        return res.status(500).send();
+    }
+})
+
+
 
 //Start Server
 app.listen(1500,(err)=>{
